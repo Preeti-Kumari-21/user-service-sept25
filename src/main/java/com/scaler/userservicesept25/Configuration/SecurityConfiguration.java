@@ -1,14 +1,11 @@
 package com.scaler.userservicesept25.Configuration;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class SecurityConfig {
+public class SecurityConfiguration {
 
-    @Bean
+/*    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         try {
             http
@@ -22,5 +19,5 @@ public class SecurityConfig {
         } catch (Exception e) {
             throw new RuntimeException("Failed to configure SecurityFilterChain", e);
         }
-    }
+    }*/
 }
