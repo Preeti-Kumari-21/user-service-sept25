@@ -7,6 +7,7 @@ import com.scaler.userservicesept25.models.User;
 import com.scaler.userservicesept25.repositories.RoleRepository;
 import com.scaler.userservicesept25.repositories.UserRespository;
 import org.antlr.v4.runtime.misc.Pair;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,10 +17,12 @@ public class UserAuthService implements AuthService {
 
     private final UserRespository userRespository;
     private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserAuthService(UserRespository userRespository, RoleRepository roleRepository) {
+    public UserAuthService(UserRespository userRespository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRespository = userRespository;
         this.roleRepository = roleRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -31,7 +34,8 @@ public class UserAuthService implements AuthService {
         User user = new User();
         user.setName(name);
         user.setEmail(email);
-        user.setPassword(password); //Here we will user Bcrypt to store the password
+        //user.setPassword(password); //Here we will user Bcrypt to store the password
+        user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setPhoneNumber(phoneNumber);
         return userRespository.save(user);
     }
@@ -43,8 +47,7 @@ public class UserAuthService implements AuthService {
             throw new UserNotPresentException("User not present with email: " + email);
         }
 
-        String storedPassword = userOptional.get().getPassword();
-        if (!storedPassword.equals(password)) {
+        if (!bCryptPasswordEncoder.matches(password, userOptional.get().getPassword())) {
             throw new PasswordNotMatchedException("Password not matched for email: " + email);
         }
 
