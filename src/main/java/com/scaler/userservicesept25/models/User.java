@@ -1,8 +1,6 @@
 package com.scaler.userservicesept25.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +19,6 @@ public class User extends BaseModel{
 
     private String phoneNumber;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Role> roles;
 }
