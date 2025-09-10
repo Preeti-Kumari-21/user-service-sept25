@@ -1,10 +1,4 @@
-CREATE USER EcommerceApplicationDBUser;
-
-CREATE DATABASE productservicesept25db;
-GRANT ALL privileges ON productservicesept25db.* to 'EcommerceApplicationDBUser';
-FLUSH PRIVILEGES;
-
-
-CREATE DATABASE userservicesept25db;
-GRANT ALL privileges ON userservicesept25db.* to 'EcommerceApplicationDBUser';
-FLUSH PRIVILEGES;
+Create Database UserServiceDB_Sept25;
+Create user UserServiceDB_Sept25;
+Grant all privileges on UserServiceDB_Sept25.* to 'UserServiceDB_Sept25';
+flush privileges;

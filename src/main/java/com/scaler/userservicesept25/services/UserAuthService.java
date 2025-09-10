@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service("userAuthService")
-public class UserAuthService implements AuthService{
+public class UserAuthService implements AuthService {
 
-    private UserRespository userRespository;
-    private RoleRepository roleRepository;
+    private final UserRespository userRespository;
+    private final RoleRepository roleRepository;
 
     public UserAuthService(UserRespository userRespository, RoleRepository roleRepository) {
         this.userRespository = userRespository;
@@ -25,8 +25,8 @@ public class UserAuthService implements AuthService{
     @Override
     public User signup(String name, String email, String password, String phoneNumber) {
         Optional<User> userOptional = userRespository.findByEmailEquals(email);
-        if(userOptional.isPresent()){
-            throw new UserAlreadyPresentException("User already present with email: "+email);
+        if (userOptional.isPresent()) {
+            throw new UserAlreadyPresentException("User already present with email: " + email);
         }
         User user = new User();
         user.setName(name);
@@ -39,17 +39,17 @@ public class UserAuthService implements AuthService{
     @Override
     public Pair<User, String> login(String email, String password) {
         Optional<User> userOptional = userRespository.findByEmailEquals(email);
-        if(userOptional.isEmpty()){
-            throw new UserNotPresentException("User not present with email: "+email);
+        if (userOptional.isEmpty()) {
+            throw new UserNotPresentException("User not present with email: " + email);
         }
 
         String storedPassword = userOptional.get().getPassword();
-        if(!storedPassword.equals(password)){
-            throw  new PasswordNotMatchedException("Password not matched for email: "+email);
+        if (!storedPassword.equals(password)) {
+            throw new PasswordNotMatchedException("Password not matched for email: " + email);
         }
 
         //To do : Generate JWT token and return it
-        return new Pair<>(userOptional.get(),"token");
+        return new Pair<>(userOptional.get(), "token");
     }
 
 }

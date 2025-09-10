@@ -1,6 +1,8 @@
 package com.scaler.userservicesept25.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity(name = "users")
-public class User extends BaseModel{
+public class User extends BaseModel {
 
     private String name;
 
