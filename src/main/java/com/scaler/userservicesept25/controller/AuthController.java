@@ -37,6 +37,9 @@ public class AuthController {
     }
 
     private UserDto convertUserToUserDto(User user) {
+        if(user == null) {
+            return null;
+        }
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setName(user.getName());
