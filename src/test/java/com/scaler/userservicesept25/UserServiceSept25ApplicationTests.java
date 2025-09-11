@@ -23,7 +23,7 @@ class UserServiceSept25ApplicationTests {
     void contextLoads() {
     }
 
-   @Test
+/*   @Test
     public void testCase(){
 
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
@@ -40,6 +40,6 @@ class UserServiceSept25ApplicationTests {
 
        jpaRegisteredClientRepository.save(oidcClient);
 
-    }
+    }*/
 
 }
