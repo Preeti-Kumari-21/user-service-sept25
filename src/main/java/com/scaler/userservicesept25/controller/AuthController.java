@@ -1,5 +1,6 @@
 package com.scaler.userservicesept25.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.scaler.userservicesept25.dto.LoginRequestDto;
 import com.scaler.userservicesept25.dto.SignupRequestDto;
 import com.scaler.userservicesept25.dto.UserDto;
@@ -7,9 +8,11 @@ import com.scaler.userservicesept25.models.Token;
 import com.scaler.userservicesept25.models.User;
 import com.scaler.userservicesept25.services.AuthService;
 import org.antlr.v4.runtime.misc.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,13 +21,14 @@ public class AuthController {
 
     private final AuthService authService;
 
+
     public AuthController(@Qualifier("userAuthService") AuthService authService) {
         this.authService = authService;
     }
 
     //signup API
     @PostMapping("/signup")// http://localhost:8082/auth/signup
-    public UserDto signup(@RequestBody SignupRequestDto signupRequestDto) {
+    public UserDto signup(@RequestBody SignupRequestDto signupRequestDto) throws JsonProcessingException {
         User user = authService.signup(signupRequestDto.getName(), signupRequestDto.getEmail(), signupRequestDto.getPassword(), signupRequestDto.getPhoneNumber());
         return convertUserToUserDto(user);
     }

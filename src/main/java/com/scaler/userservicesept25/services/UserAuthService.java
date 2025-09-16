@@ -1,5 +1,8 @@
 package com.scaler.userservicesept25.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.scaler.userservicesept25.dto.SendEmailEventDto;
 import com.scaler.userservicesept25.exceptions.InvalidTokenException;
 import com.scaler.userservicesept25.exceptions.PasswordNotMatchedException;
 import com.scaler.userservicesept25.exceptions.UserAlreadyPresentException;
@@ -11,6 +14,8 @@ import com.scaler.userservicesept25.repositories.TokenRespository;
 import com.scaler.userservicesept25.repositories.UserRespository;
 import org.antlr.v4.runtime.misc.Pair;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +31,11 @@ public class UserAuthService implements AuthService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TokenRespository tokenRespository;
 
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public UserAuthService(UserRespository userRespository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, TokenRespository tokenRespository) {
         this.userRespository = userRespository;
@@ -35,7 +45,7 @@ public class UserAuthService implements AuthService {
     }
 
     @Override
-    public User signup(String name, String email, String password, String phoneNumber) {
+    public User signup(String name, String email, String password, String phoneNumber) throws JsonProcessingException {
         Optional<User> userOptional = userRespository.findByEmailEquals(email);
         if (userOptional.isPresent()) {
             throw new UserAlreadyPresentException("User already present with email: " + email);
@@ -46,7 +56,16 @@ public class UserAuthService implements AuthService {
         //user.setPassword(password); //Here we will user Bcrypt to store the password
         user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setPhoneNumber(phoneNumber);
-        return userRespository.save(user);
+        user = userRespository.save(user);
+
+        //Publish this event to Kafka topic to send a welcome email
+        SendEmailEventDto sendEmailEventDto = new SendEmailEventDto();
+        sendEmailEventDto.setToEmail(email);
+        sendEmailEventDto.setSubject("Welcome to our service");
+        sendEmailEventDto.setBody("Welcome aboard, happy to have you with us!");
+        kafkaTemplate.send("sendEmailEvent", objectMapper.writeValueAsString(sendEmailEventDto));
+
+        return user;
     }
 
     @Override
