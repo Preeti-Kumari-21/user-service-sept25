@@ -54,8 +54,10 @@ public class AuthController {
     //token is passed in url
     @GetMapping("/validate/{tokenValue}") // http://localhost:8082/auth/validate/{tokenValue}
     public UserDto validateToken(@PathVariable("tokenValue") String tokenValue){
-        User user = authService.validateToken(tokenValue);
-        return convertUserToUserDto(user);
+        System.out.println("Token received in user service-----: " + tokenValue);
+       // User user = authService.validateToken(tokenValue);
+        //return convertUserToUserDto(user);
+        return null;
     }
 
     //Passing token in header
